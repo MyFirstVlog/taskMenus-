@@ -49,13 +49,29 @@ class Tareas {
             const estado = (completadoEn) ? 'Completado'.green : 'Pendiente'.red
 
             if(completadas){
-                if(completadoEn){
-                    console.log(`${index.toString().green}. ${desc} ::  ${estado}\n`)
+                if(completadoEn && completadoEn !== 'undefined'){
+                    console.log(`${index.toString().green}. ${desc} ::  ${completadoEn.cyan}\n`)
                 }
             }else{
                 if(!completadoEn){
                     console.log(`${index.toString().red}. ${desc} ::  ${estado}\n`)
                 }
+            }
+        })
+    }
+
+    toggleCompletadas(ids = []){
+        ids.forEach(id => {
+            const tarea = this._listado[id]
+            if(!tarea.completadoEn){
+                tarea.completadoEn = new Date().toISOString()
+            }
+        })
+
+        this.listadoArr.forEach(each => {
+            
+            if(!ids.includes(each.id)){
+                this._listado[each.id].completadoEn = null
             }
         })
     }
