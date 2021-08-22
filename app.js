@@ -1,5 +1,11 @@
 require('colors')
-const { inquirerMenu, inquirerPausa, leerInput } = require('./helpers/inquirer.js')
+const {guardardB, leerInfo} = require('./helpers/guardarArchivo.js')
+const { inquirerMenu, 
+            inquirerPausa, 
+                leerInput, 
+                    listadoTareasBorrar, 
+                        confirmar, 
+                            mostrarListadoCheck } = require('./helpers/inquirer.js')
 //const Tarea = require('./Models/tarea.js')
 const Tareas = require('./Models/tareas.js')
 const {mostrarMenu, pausa} = require('.\\helpers\\mensajes.js')
@@ -7,6 +13,14 @@ const {mostrarMenu, pausa} = require('.\\helpers\\mensajes.js')
 const main = async() => {
     let opt = ''
     const tareas = new Tareas()
+
+    const tareasDB = leerInfo()
+
+    if(tareasDB){
+        tareas.cargartarea(tareasDB)
+    }
+
+    //await inquirerPausa()
 
     do {
         
@@ -20,10 +34,35 @@ const main = async() => {
             break;
 
             case '2':
-                console.log(tareas._listado)
+                tareas.listadoCompleto()
+            break;
+
+            case '3':
+                tareas.tareasPendientesCompletadas(true)
+            break;
+
+            case '4':
+                tareas.tareasPendientesCompletadas(false)
+            break;
+
+            case '5':
+                const ids = await mostrarListadoCheck(tareas.listadoArr)
+                console.log({ids})
+            break
+
+            case '6':
+                const id = await listadoTareasBorrar(tareas.listadoArr)
+                if(id !== '0'){
+                    const ok = await confirmar('Estas seguro my broh???')
+                    if(ok){
+                        tareas.borrarTarea(id)
+                        console.log('Tarea Borrada Correctamente')
+                    }
+                }
             break;
         }
 
+        guardardB(tareas.listadoArr)
         
         await inquirerPausa()
     } while (opt !== '0');
